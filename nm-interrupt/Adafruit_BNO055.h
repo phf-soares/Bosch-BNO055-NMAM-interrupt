@@ -36,7 +36,7 @@
 #include <Adafruit_Sensor.h>
 #include "imumaths.h"
 
-#define BNO055_ADDRESS_A (0x29)
+#define BNO055_ADDRESS_A (0x28)
 #define BNO055_ADDRESS_B (0x29)
 #define BNO055_ID        (0xA0)
 
@@ -339,7 +339,7 @@ public:
         VECTOR_GRAVITY       = BNO055_GRAVITY_DATA_X_LSB_ADDR
     } adafruit_vector_type_t;
     
-    Adafruit_BNO055 ( int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A );
+    Adafruit_BNO055 ( int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_B );
 
     bool  begin               ( adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF );
     void  setMode             ( adafruit_bno055_opmode_t mode );
