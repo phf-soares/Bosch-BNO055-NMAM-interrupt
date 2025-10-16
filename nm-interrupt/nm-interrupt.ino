@@ -13,8 +13,7 @@ Adafruit_BNO055 bno = Adafruit_BNO055();
 
 void setup(void)
 {
-  Serial.begin(BAUD_RATE);
-  Serial.println("Acc Only Sensor Raw Data Test"); Serial.println("");
+  Serial.begin(BAUD_RATE);  
   if (!bno.begin())
   {
     Serial.print("No connection.");
@@ -22,9 +21,8 @@ void setup(void)
   }
   nm_interrupt = false;
   pinMode(interrupt_pin, INPUT);
-  attachInterrupt(digitalPinToInterrupt(interrupt_pin), nm_interrupt_callback, RISING);
-  //bno.enableSlowNoMotion(5, 1, NO_MOTION);
-  bno.enableAnyMotion(1, 0);
+  attachInterrupt(digitalPinToInterrupt(interrupt_pin), nm_interrupt_callback, RISING); 
+  bno.enableAnyMotion(0, 0);
   bno.enableInterruptsOnXYZ(ENABLE, ENABLE, ENABLE);
   bno.setExtCrystalUse(true);
   bno.setMode(Adafruit_BNO055::OPERATION_MODE_ACCONLY);
