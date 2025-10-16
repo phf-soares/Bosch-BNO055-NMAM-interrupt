@@ -35,13 +35,13 @@ void loop(void)
   if (nm_interrupt) {
     imu::Vector<3> acc = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
     /* Display the floating point data */
-    Serial.print("X: ");
-    Serial.print(acc.x());
-    Serial.print(" Y: ");
-    Serial.print(acc.y());
-    Serial.print(" Z: ");
-    Serial.print(acc.z());
-    Serial.print("\t\t");
+    Serial.print("-60.,"); //set lower scale
+    Serial.print(acc.x());  //x acceleration
+    Serial.print(",");
+    Serial.print(acc.y()); //y accel
+    Serial.print(",");
+    Serial.print(acc.z()); //z accel
+    Serial.println(",60.0"); //set upper scale
   }
   else
   {
