@@ -161,39 +161,47 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
 
 /**************************************************************************/
 /*!
- @brief  Configure acelerometer settings: 
- 0b000 111 00 (Normal, 1000Hz, 2G)  = 0X1C;
- 0b000 111 01 (Normal, 1000Hz, 4G)  = 0X1D;
- 0b000 111 10 (Normal, 1000Hz, 8G)  = 0X1E;
- 0b000 111 11 (Normal, 1000Hz, 16G) = 0X1F;
- */
+    @brief  Change the accelerometer range
+*/
 /**************************************************************************/
-void Adafruit_BNO055::setAcelerometerConfig(uint8_t config)
+/* See ressources:
+    - https://forums.adafruit.com/viewtopic.php?f=8&t=135817&p=673509&hilit=bno055+bno055+16g#p673509
+    - https://forums.adafruit.com/viewtopic.php?f=24&t=135827&p=673556&hilit=bno055+bno055+16g#p673556
+    - https://arduino.stackexchange.com/questions/52397/configuring-accelerometer-on-bno055-sensor
+*/
+bool Adafruit_BNO055::setAccRange( uint8_t range )
 {
-    // TODO: this may be a good flow for any config register setting methods,
-    // so could be worth a look at the those methods for rework
-    
-    // Need to be on page 0 to get into config mode
-    //adafruit_bno055_page_t lastPage = _page;
-    //if (lastPage != PAGE_0) setPage(PAGE_0);
+  adafruit_bno055_opmode_t modeback = _mode;
 
-    // Must be in config mode, so force it
-    //adafruit_bno055_opmode_t lastMode = _mode;
-    //setMode(OPERATION_MODE_CONFIG);
+  /* Switch to config mode (just in case since this is the default) */
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
 
-    // Change to page 1 for interrupt settings
-    setPage(PAGE_1);
-        
-    // Write back the entire register
-    write8(ACC_CONFIG_ADDR, config);
-    delay(30);
-    
-    // Return the mode to the last mode
-    setPage(PAGE_0);
-    //setMode(lastMode);
-    
-    // Change the page back to whichever it was initially
-    //if (lastPage != PAGE_0) setPage(lastPage);
+  /* save selected page ID and switch to page 1 */
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x01);
+
+  /* set configuration to 2G range */
+  uint8_t acc_config = (uint8_t)((BNO055_ACC_PWRMODE_NORMAL << 5) 
+                   | (BNO055_ACC_BW_1000_Hz << 2)  
+                   | range ); // eg: BNO055_ACC_CONFIG_2G
+  write8(BNO055_ACC_CONFIG_ADDR, acc_config);
+  delay(10);
+
+  /* Read back the mode to confirm application of the parameters 
+     IF the bno does not accept the configuration THEN  the register
+        should be reset to the previous value */
+  uint8_t check_config = read8( BNO055_ACC_CONFIG_ADDR );
+
+
+  /* restore page ID */
+  write8(BNO055_PAGE_ID_ADDR, savePageID);
+
+  /* Set the requested operating mode (see section 3.3) */
+  setMode(modeback);
+  delay(20);
+
+  return check_config == acc_config;
 }
 
 /**************************************************************************/
