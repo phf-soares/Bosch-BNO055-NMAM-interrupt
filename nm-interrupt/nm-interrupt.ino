@@ -8,24 +8,34 @@
 bool nm_interrupt;
 
 const uint32_t BAUD_RATE = 921600;
+const uint8_t ACC_1000HZ_2G = 0x1C;
 
 Adafruit_BNO055 bno = Adafruit_BNO055();
 
+void bno_write(uint8_t i2c_addr, uint8_t reg, uint8_t data)  // write one BNO register
+{
+  Wire.beginTransmission(i2c_addr);
+  Wire.write(reg);
+  Wire.write(data);
+  Wire.endTransmission(true);  // send stop
+}
+
 void setup(void)
 {
-  Serial.begin(BAUD_RATE);  
+  Serial.begin(BAUD_RATE);
+  bno.setMode(Adafruit_BNO055::OPERATION_MODE_ACCONLY);  
   if (!bno.begin())
   {
     Serial.print("No connection.");
     while (1);
   }
+  bno.setAcelerometerConfig(ACC_1000HZ_2G);  
   nm_interrupt = false;
   pinMode(interrupt_pin, INPUT);
-  attachInterrupt(digitalPinToInterrupt(interrupt_pin), nm_interrupt_callback, RISING); 
-  bno.enableAnyMotion(0, 0);
+  attachInterrupt(digitalPinToInterrupt(interrupt_pin), nm_interrupt_callback, RISING);   
+  bno.enableAnyMotion(0, 0);  
   bno.enableInterruptsOnXYZ(ENABLE, ENABLE, ENABLE);
-  bno.setExtCrystalUse(true);
-  bno.setMode(Adafruit_BNO055::OPERATION_MODE_ACCONLY);
+  bno.setExtCrystalUse(true);    
 }
 
 void loop(void)

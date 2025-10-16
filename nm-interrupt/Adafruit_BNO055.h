@@ -206,7 +206,7 @@ public:
         MAG_OFFSET_Z_LSB_ADDR                                   = 0X5F,
         MAG_OFFSET_Z_MSB_ADDR                                   = 0X60,
         
-        /* Gyroscope Offset register s*/
+        /* Gyroscope Offset registers*/
         GYRO_OFFSET_X_LSB_ADDR                                  = 0X61,
         GYRO_OFFSET_X_MSB_ADDR                                  = 0X62,
         GYRO_OFFSET_Y_LSB_ADDR                                  = 0X63,
@@ -221,6 +221,9 @@ public:
         MAG_RADIUS_MSB_ADDR                                     = 0X6A,
         
         /* PAGE1 REGISTER DEFINITION START*/
+        /* Accelerometer Config registers MADE*/
+        ACC_CONFIG_ADDR                                         = 0X08,
+
         /* Interrupt mask register */
         INT_MSK_ADDR                                            = 0X0F,
         INT_MSK_ACC_NM_MSK                                      = 0X80,
@@ -366,6 +369,9 @@ public:
     void  setSensorOffsets(const uint8_t* calibData);
     void  setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
     bool  isFullyCalibrated(void);
+
+    /* Acelerometer Config*/
+    void setAcelerometerConfig(uint8_t config);
     
     /* Interrupt Methods */
     void resetInterrupts();

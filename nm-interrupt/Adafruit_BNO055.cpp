@@ -161,6 +161,43 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
 
 /**************************************************************************/
 /*!
+ @brief  Configure acelerometer settings: 
+ 0b000 111 00 (Normal, 1000Hz, 2G)  = 0X1C;
+ 0b000 111 01 (Normal, 1000Hz, 4G)  = 0X1D;
+ 0b000 111 10 (Normal, 1000Hz, 8G)  = 0X1E;
+ 0b000 111 11 (Normal, 1000Hz, 16G) = 0X1F;
+ */
+/**************************************************************************/
+void Adafruit_BNO055::setAcelerometerConfig(uint8_t config)
+{
+    // TODO: this may be a good flow for any config register setting methods,
+    // so could be worth a look at the those methods for rework
+    
+    // Need to be on page 0 to get into config mode
+    //adafruit_bno055_page_t lastPage = _page;
+    //if (lastPage != PAGE_0) setPage(PAGE_0);
+
+    // Must be in config mode, so force it
+    //adafruit_bno055_opmode_t lastMode = _mode;
+    //setMode(OPERATION_MODE_CONFIG);
+
+    // Change to page 1 for interrupt settings
+    setPage(PAGE_1);
+        
+    // Write back the entire register
+    write8(ACC_CONFIG_ADDR, config);
+    delay(30);
+    
+    // Return the mode to the last mode
+    setPage(PAGE_0);
+    //setMode(lastMode);
+    
+    // Change the page back to whichever it was initially
+    //if (lastPage != PAGE_0) setPage(lastPage);
+}
+
+/**************************************************************************/
+/*!
     @brief  Resets all interrupts
  */
 /**************************************************************************/
