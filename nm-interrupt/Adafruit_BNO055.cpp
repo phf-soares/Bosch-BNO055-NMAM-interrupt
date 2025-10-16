@@ -161,6 +161,51 @@ void Adafruit_BNO055::setExtCrystalUse(boolean usextal)
 
 /**************************************************************************/
 /*!
+    @brief  Change the accelerometer range
+*/
+/**************************************************************************/
+/* See ressources:
+    - https://forums.adafruit.com/viewtopic.php?f=8&t=135817&p=673509&hilit=bno055+bno055+16g#p673509
+    - https://forums.adafruit.com/viewtopic.php?f=24&t=135827&p=673556&hilit=bno055+bno055+16g#p673556
+    - https://arduino.stackexchange.com/questions/52397/configuring-accelerometer-on-bno055-sensor
+*/
+bool Adafruit_BNO055::setAccRange( uint8_t range )
+{
+  adafruit_bno055_opmode_t modeback = _mode;
+
+  /* Switch to config mode (just in case since this is the default) */
+  setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  /* save selected page ID and switch to page 1 */
+  uint8_t savePageID = read8(BNO055_PAGE_ID_ADDR);
+  write8(BNO055_PAGE_ID_ADDR, 0x01);
+
+  /* set configuration to 2G range */
+  uint8_t acc_config = (uint8_t)((BNO055_ACC_PWRMODE_NORMAL << 5) 
+                   | (BNO055_ACC_BW_1000_Hz << 2)  
+                   | range ); // eg: BNO055_ACC_CONFIG_2G
+  write8(BNO055_ACC_CONFIG_ADDR, acc_config);
+  delay(10);
+
+  /* Read back the mode to confirm application of the parameters 
+     IF the bno does not accept the configuration THEN  the register
+        should be reset to the previous value */
+  uint8_t check_config = read8( BNO055_ACC_CONFIG_ADDR );
+
+
+  /* restore page ID */
+  write8(BNO055_PAGE_ID_ADDR, savePageID);
+
+  /* Set the requested operating mode (see section 3.3) */
+  setMode(modeback);
+  delay(20);
+
+  return check_config == acc_config;
+}
+
+/**************************************************************************/
+/*!
     @brief  Resets all interrupts
  */
 /**************************************************************************/

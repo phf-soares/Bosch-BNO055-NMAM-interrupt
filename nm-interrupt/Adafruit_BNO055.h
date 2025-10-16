@@ -206,7 +206,7 @@ public:
         MAG_OFFSET_Z_LSB_ADDR                                   = 0X5F,
         MAG_OFFSET_Z_MSB_ADDR                                   = 0X60,
         
-        /* Gyroscope Offset register s*/
+        /* Gyroscope Offset registers*/
         GYRO_OFFSET_X_LSB_ADDR                                  = 0X61,
         GYRO_OFFSET_X_MSB_ADDR                                  = 0X62,
         GYRO_OFFSET_Y_LSB_ADDR                                  = 0X63,
@@ -221,6 +221,34 @@ public:
         MAG_RADIUS_MSB_ADDR                                     = 0X6A,
         
         /* PAGE1 REGISTER DEFINITION START*/
+        /* Accelerometer Data Registry */ 
+        BNO055_ACC_CONFIG_ADDR  = 0x08,
+
+        //values taken from section 3.5.2 page 27
+        BNO055_ACC_CONFIG_2G    = 0,  //0B00 
+        BNO055_ACC_CONFIG_4G    = 1,  //0B01
+        BNO055_ACC_CONFIG_8G    = 2,  //0B10
+        BNO055_ACC_CONFIG_16G   = 3,  //0B11
+
+                
+        //Accelerometer bandwidth definitions
+        BNO055_ACC_BW_7_81_Hz  =0,  
+        BNO055_ACC_BW_15_63_Hz =1,  
+        BNO055_ACC_BW_31_25_Hz =2,   
+        BNO055_ACC_BW_62_5_Hz  =3, 
+        BNO055_ACC_BW_125_Hz   =4,  
+        BNO055_ACC_BW_250_Hz   =5,  
+        BNO055_ACC_BW_500_Hz   =6,  
+        BNO055_ACC_BW_1000_Hz  =7, 
+
+        //Accelerometer powermode definitions 
+        BNO055_ACC_PWRMODE_NORMAL       = 0,  
+        BNO055_ACC_PWRMODE_SUSPEND      = 1, 
+        BNO055_ACC_PWRMODE_LP1          = 2, 
+        BNO055_ACC_PWRMODE_STANDBY      = 3,  
+        BNO055_ACC_PWRMODE_LP2          = 4, 
+        BNO055_ACC_PWRMODE_DEEP_SUSPEND = 5, 
+
         /* Interrupt mask register */
         INT_MSK_ADDR                                            = 0X0F,
         INT_MSK_ACC_NM_MSK                                      = 0X80,
@@ -339,9 +367,9 @@ public:
         VECTOR_GRAVITY       = BNO055_GRAVITY_DATA_X_LSB_ADDR
     } adafruit_vector_type_t;
     
-    Adafruit_BNO055 ( int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A );
+    Adafruit_BNO055 ( int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_B );
 
-    bool  begin               ( adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF );
+    bool  begin               ( adafruit_bno055_opmode_t mode = OPERATION_MODE_ACCONLY );
     void  setMode             ( adafruit_bno055_opmode_t mode );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
@@ -366,6 +394,9 @@ public:
     void  setSensorOffsets(const uint8_t* calibData);
     void  setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
     bool  isFullyCalibrated(void);
+
+    /* Acelerometer Config*/
+    bool  setAccRange         ( uint8_t range );
     
     /* Interrupt Methods */
     void resetInterrupts();
