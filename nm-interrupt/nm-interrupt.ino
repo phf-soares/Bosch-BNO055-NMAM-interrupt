@@ -1,10 +1,10 @@
 #include <Wire.h>
-#include <Adafruit_Sensor.h>
+#include "Adafruit_Sensor.h"
 #include "Adafruit_BNO055.h"
 #include "imumaths.h"
 
 #define BNO055_SAMPLERATE_DELAY_MS (500)
-#define interrupt_pin 5
+#define interrupt_pin 2
 bool nm_interrupt;
 
 Adafruit_BNO055 bno = Adafruit_BNO055();
